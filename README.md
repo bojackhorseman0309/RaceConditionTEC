@@ -35,7 +35,7 @@ sudo sysctl fs.protected_regular=0
 
 ```
 # Mismo proceso para todos los vulp*.c
-gcc vulp.c -o vulp -lm
+gcc vulp.c -o vulp 
 sudo chown root vulp
 sudo chmod 4755 vulp
 
