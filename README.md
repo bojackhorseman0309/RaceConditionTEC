@@ -105,7 +105,7 @@ pwned::0:0:pwned:/root:/bin/bash
 
 Se redujo el valor de delay a 0 para comprobar si existe problemas para explotar la vulnerabilidad.
 Se determinó que todavía se puede ejecutar la vulnerabilidad sin problema alguno y sin una perdida
-en la tasa de exito, esto, dado al uso de la función `renameat2`, que previene condiciones de carrera en
+en la tasa de éxito, esto, dado al uso de la función `renameat2`, que previene condiciones de carrera en
 el script atacante firegoblin.c.
 
 # Trabajo 2
@@ -137,9 +137,47 @@ No permission fp4
 
 ```
 
-En suma, se dejó el programa `looper.sh` corriendo durante un tiempo y no se obtuvieron los resultados anteriormente
-vistos, no fue posible realizar el ataque y el script menciona que no existen los permisos para abrir el archivo tanto a
-nivel de la función `access` como en `fopen`.
+En suma, se dejó el programa `looper.sh` corriendo durante un tiempo de 5 minutos y no se obtuvieron los resultados
+anteriormente vistos, no fue posible realizar el ataque y el script menciona que no existen
+los permisos para abrir el archivo tanto a nivel de la función `access` como en `fopen`.
 
 Al bajar el nivel a solo dos verificaciones en lugar de 4,
-si se pudo lograr modificar el archivo pero con una tasa de éxito un poco menor.
+si se pudo lograr modificar el archivo, pero con una tasa de éxito un poco menor,
+se tomó menos de 10 segundos.
+
+# Trabajo 3
+
+Principio de privilegio mínimo.
+
+En esta parte se crea un nuevo script llamado `vulp_seteuid.c` que se encarga de bajar los privilegios del usuario
+ejecutante del proceso al usuario que lo ejecuto, todo esto antes de las llamadas `access` y `fopen`.
+
+Esto hace que aunque se den permisos de SETUID root al programa, este a nivel de código de manera explícita
+los configura para bajar el nivel y que al momento de leer /etc/passwd en modo "a+" no se pueda, ya que el usuario
+original no tiene permisos de root y no puede acceder al archivo de esta manera.
+
+```
+./firegoblin
+
+## En otra terminal (se modifica looper.sh para que use vulp_seteuid)
+$ ./looper.sh
+     35397 Segmentation fault      (core dumped) | ./vulp_seteuid
+No permission 
+./looper.sh: line 14: 35411 Done                    echo 'pwned::0:0:pwned:/root:/bin/bash'
+     35412 Segmentation fault      (core dumped) | ./vulp_seteuid
+./looper.sh: line 14: 35423 Done                    echo 'pwned::0:0:pwned:/root:/bin/bash'
+     35424 Segmentation fault      (core dumped) | ./vulp_seteuid
+./looper.sh: line 14: 35432 Done                    echo 'pwned::0:0:pwned:/root:/bin/bash'
+     35433 Segmentation fault      (core dumped) | ./vulp_seteuid
+No permission 
+No permission 
+No permission 
+./looper.sh: line 14: 35453 Done                    echo 'pwned::0:0:pwned:/root:/bin/bash'
+     35454 Segmentation fault      (core dumped) | ./vulp_seteuid
+No permission 
+```
+
+Como se observa anteriormente, ya no se puede realizar el ataque por que por mas que se haya
+utilizado setuid como root, el programa baja los privilegios antes de realizar los accesos a los archivos.
+
+Por ende no es posible ejecutar el ataque utilizando el mismo ./firegoblin.c.
