@@ -43,7 +43,7 @@ gcc firegoblin.c -o firegoblin
 
 # Trabajo 1
 
-Agregar entrada a `/etc/shadow` y `/etc/password` para un nuevo usuario root mediante un ataque al programa vulp.
+Agregar entrada a `/etc/shadow` y `/etc/password` para un nuevo usuario `root` mediante un ataque al programa `vulp`.
 
 1. Agregar nuevo usuario como prueba de como se agrega en `/etc/shadow` y `/etc/password`
 
@@ -58,7 +58,7 @@ pwned:$y$j9T$yb7F48eurkR2ZugVrkr4U/$TkSO.sGjtjyki/IlF018wo6kw7zd4nUUrhE9emRNb7C:
 pwned:x:1001:1001::/home/pwned:/bin/sh
 ```
 
-Es necesario para el ataque que este se asemeje a root y tenga los valores de 0 en `/etc/passwd`
+Es necesario para el ataque que este se asemeje a `root` y tenga los valores de 0 en `/etc/passwd`
 
 Por lo que debería verse asi:
 
@@ -76,7 +76,7 @@ no tener que modificar ambos.
 2. Ejecutar el ataque
 
 Es necesario ejecutar el ataque por medio de un loop, ya que al ser un ataque de condición de carrera,
-tiene que correrse en paralelo multiples veces hasta encontrar el exito.
+tiene que correrse en paralelo multiples veces hasta encontrar el éxito.
 
 ```
 $ ./firegoblin
@@ -86,7 +86,7 @@ $ chmod +x looper.sh
 $ ./looper.sh 
 ```
 
-A cierto momento se debería recibir el mensaje de exito en la terminal de looper
+A cierto momento se debería recibir el mensaje de éxito en la terminal de looper
 y se debería poder acceder al usuario creado y verificar que es root.
 
 ```
@@ -101,12 +101,12 @@ uid=0(root) gid=0(root) groups=0(root)
 pwned::0:0:pwned:/root:/bin/bash
 ```
 
-## Mejora de la tasa de exito
+## Mejora de la tasa de éxito
 
 Se redujo el valor de delay a 0 para comprobar si existe problemas para explotar la vulnerabilidad.
 Se determinó que todavía se puede ejecutar la vulnerabilidad sin problema alguno y sin una perdida
 en la tasa de éxito, esto, dado al uso de la función `renameat2`, que previene condiciones de carrera en
-el script atacante firegoblin.c.
+el script atacante `firegoblin.c`.
 
 # Trabajo 2
 
@@ -141,7 +141,7 @@ En suma, se dejó el programa `looper.sh` corriendo durante un tiempo de 5 minut
 anteriormente vistos, no fue posible realizar el ataque y el script menciona que no existen
 los permisos para abrir el archivo tanto a nivel de la función `access` como en `fopen`.
 
-Al bajar el nivel a solo dos verificaciones en lugar de 4,
+Al bajar el nivel a solo dos verificaciones en lugar de cuatro,
 si se pudo lograr modificar el archivo, pero con una tasa de éxito un poco menor,
 se tomó menos de 10 segundos.
 
@@ -152,9 +152,9 @@ Principio de privilegio mínimo.
 En esta parte se crea un nuevo script llamado `vulp_seteuid.c` que se encarga de bajar los privilegios del usuario
 ejecutante del proceso al usuario que lo ejecuto, todo esto antes de las llamadas `access` y `fopen`.
 
-Esto hace que aunque se den permisos de SETUID root al programa, este a nivel de código de manera explícita
-los configura para bajar el nivel y que al momento de leer /etc/passwd en modo "a+" no se pueda, ya que el usuario
-original no tiene permisos de root y no puede acceder al archivo de esta manera.
+Esto hace que aunque se den permisos de `SETUID` `root` al programa, este a nivel de código de manera explícita
+los configura para bajar el nivel y que al momento de leer `/etc/passwd` en modo `a+` no se pueda, ya que el usuario
+original no tiene permisos de `root` y no puede acceder al archivo de esta manera.
 
 ```
 ./firegoblin
@@ -177,7 +177,7 @@ No permission
 No permission 
 ```
 
-Como se observa anteriormente, ya no se puede realizar el ataque por que por mas que se haya
-utilizado setuid como root, el programa baja los privilegios antes de realizar los accesos a los archivos.
+Como se observa anteriormente, ya no se puede realizar el ataque porque por más que se haya
+utilizado `setuid` como `root`, el programa baja los privilegios antes de realizar los accesos a los archivos.
 
-Por ende no es posible ejecutar el ataque utilizando el mismo ./firegoblin.c.
+Por ende no es posible ejecutar el ataque utilizando el mismo `./firegoblin.c`.
